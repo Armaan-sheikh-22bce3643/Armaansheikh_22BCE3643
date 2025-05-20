@@ -1,0 +1,32 @@
+show databases;
+show databases;
+create database vit;
+use vit;
+CREATE TABLE vit_vellore (
+    name VARCHAR(100),
+    REGNO VARCHAR(20) PRIMARY KEY,
+    SCHOOL VARCHAR(100),
+    GRAD_YR INT
+);
+
+INSERT INTO vit_vellore (name, REGNO, SCHOOL, GRAD_YR) VALUES
+('AYUSH', '22BCE1123', 'School of Computer Science', 2026),
+('ARYAN', '22EEE1002', 'School of Electrical Engineering', 2026),
+('SHIKHA', '22MEC1003', 'School of Mechanical Engineering', 2026),
+('RAHUL', '21BCE1004', 'School of Computer Science', 2025);
+
+INSERT INTO vit_vellore (name, REGNO, SCHOOL, GRAD_YR) VALUES
+('SHASHANK', '22CSE1005', 'School of Computer Science', 2026),
+('VYOMESH', '22ECE1006', 'School of Electronics Engineering', 2026),
+('MAYANK', '21BBA1007', 'School of Business', 2025),
+('ARJUN', '23CIV1008', 'School of Civil Engineering', 2027),
+('DIYA NAIR', '22BIO1009', 'School of Bio Sciences', 2026);
+
+select * from vit_vellore;
+alter table vit_vellore add(PHONE_NO varchar(10));
+desc vit_vellore;
+alter table vit_vellore drop column PHONE_NO;
+alter table vit_vellore add(S_COUNTRY varchar(10) default 'INDIA');
+update vit_vellore set name='ARMAAN SHEIKH' WHERE name='AYUSH';
+
+

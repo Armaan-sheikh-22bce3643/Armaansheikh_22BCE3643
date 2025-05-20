@@ -1,0 +1,67 @@
+show databases;
+create database tuesday;
+
+use tuesday;
+
+
+create table category(
+c_id int primary key,
+c_items varchar(25),
+c_details varchar(25)
+);
+
+
+insert into category values(101,'electronics','new');
+insert into category values(102,'furnitures','old');
+
+select * from category;
+
+create table products(
+p_id int primary key,
+p_name varchar(25),
+p_details varchar(35),
+c_id int,
+CONSTRAINT FK_PRODUCT foreign key(c_id) references category(c_id) on delete cascade
+);
+
+delete from category where c_id=101;
+desc products;
+
+insert into products values(502,'samsung s21','8GB RAM',101);
+
+select * from products;
+
+
+alter table products drop FOREIGN KEY FK_PRODUCT;
+alter table products add constraint FK_PRODUCT2
+FOREIGN KEY (c_id) REFERENCES category(c_id);
+
+
+
+
+
+#________3__________
+create table persons (
+    id int NOT NULL,
+    Name varchar(255) NOT NULL,
+    Age int,
+    CONSTRAINT UC_Person UNIQUE (id,Name)
+);
+
+alter table persons drop constraint UC_Person;
+
+
+alter table persons add constraint PK_Person PRIMARY KEY (id,Name);
+alter table persons drop PRIMARY KEY;
+
+
+
+
+
+
+
+
+
+
+
+

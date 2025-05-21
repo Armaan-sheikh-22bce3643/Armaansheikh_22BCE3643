@@ -1,0 +1,104 @@
+show databases;
+use vit;
+show tables;
+
+
+select * from vit;
+select * from worker1;
+
+select * from worker1 where SALARY between 100000 and 300000;
+select * from worker1 where SALARY not between 100000 and 300000;
+select * from worker1 where SALARY between 100000 and 300000 and WORKER_ID not in(1,2,3);
+select distinct(DEPARTMENT) from worker1;
+
+CREATE TABLE Worker2 (
+	WORKER_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	FIRST_NAME CHAR(25),
+	LAST_NAME CHAR(25),
+	SALARY INT,
+	JOINING_DATE DATETIME,
+	DEPARTMENT CHAR(25)
+);
+
+INSERT INTO Worker2(WORKER_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+		(001, 'Monika', 'Arora', 100000, '14-02-20 09.00.00', 'HR'),
+		(002, 'Niharika', 'Verma', 80000, '14-06-11 09.00.00', 'Admin'),
+		(003, 'Vishal', 'Singhal', 300000, '14-02-20 09.00.00', 'HR'),
+		(004, 'Amitabh', 'Singh', 500000, '14-02-20 09.00.00', 'Admin'),
+		(005, 'Vivek', 'Bhati', 500000, '14-06-11 09.00.00', 'Admin'),
+		(006, 'Vipul', 'Diwan', 200000, '14-06-11 09.00.00', 'Account'),
+		(007, 'Satish', 'Kumar', 75000, '14-01-20 09.00.00', 'Account'),
+        (008, 'Geetika', 'Chauhan', 90000, '14-04-11 09.00.00', 'Admin')
+;
+
+select * from worker2;
+select DEPARTMENT from worker1 
+union
+select DEPARTMENT from worker2;
+
+select DEPARTMENT from worker1 
+union all
+select DEPARTMENT from worker2;
+
+select first_name,DEPARTMENT from worker1 where department='HR' 
+union 
+select first_name,DEPARTMENT from worker2 where department='HR';
+
+select first_name,DEPARTMENT from worker1 where department='HR' 
+union all
+select first_name,DEPARTMENT from worker2 where department='HR';
+
+
+
+#_____________min max sum avg count_____________
+select min(SALARY) from WORKER1;
+select MAX(SALARY) from WORKER1;
+select SUM(SALARY) from WORKER1;
+select AVG(SALARY) from WORKER1;
+select COUNT(SALARY) from WORKER1;
+
+#case statement______
+ 
+select First_name , Salary,
+case
+	when Salary > 300000 then 'Rich People'
+    when Salary < 300000 && Salary <= 100000 then 'middle layer'
+    when Salary < 100000 then 'poor people'
+    else 'data not found'
+end
+as statusbasedcheck_salary
+from Worker1 ;
+
+#order by_____(asc,desc)
+
+select * from worker1 order by salary;
+select * from worker1 where salary>100000 order by salary desc;
+
+
+select first_name,last_name from worker1
+order by
+last_name desc,
+first_name asc;
+
+#like clause_______
+
+select * from worker1 where first_name like '_i%';
+select * from worker1 where last_name like '%an';
+select * from worker1 where last_name like '%a_';
+select * from worker1 where first_name like 'V%';
+select * from worker1 where first_name like 'v%l';
+
+#VIEW__________
+
+CREATE view  salary_100000 as select * from worker1 where salary>100000 order by salary desc;
+
+select * from salary_100000;
+drop view salary_100000;
+
+
+
+
+
+
+
+

@@ -1,0 +1,75 @@
+show databases;
+use vit;
+show tables;
+select * from worker1;
+
+#group by__________(limit/offset)
+
+select count(worker_id)cnt,department from worker1 group by department order by cnt desc;
+select count(worker_id)cnt,department from worker1 group by department order by cnt desc limit 1 offset 1; #2nd largest val
+
+select  first_name,salary,count(salary)scnt from worker1 group by departemt;
+select department,sum(salary) from worker1 group by department order by sum(salary) limit 1 offset 1;
+
+#having__________
+SELECT COUNT(department), department
+FROM worker1
+GROUP BY department
+HAVING COUNT(department) > 3;
+
+select * from worker1 where salary=(select max(salary) from worker1);
+select * from worker1 where salary=(select min(salary) from worker1);
+select * from worker1 where salary=(select salary from worker1 where salary=300000);
+SELECT * FROM worker1 WHERE salary > (SELECT AVG(salary)FROM worker1);
+
+create table student(
+s_id int,
+s_name varchar(25)
+);
+insert into student values (101,'jayanth'),(102,'karthik'),(103,'Praveen'),(105,'mahesh'),(106,'Arun');
+
+create table address(
+s_id int,
+s_address varchar(25));
+insert into address values (101,'coimbatore'),(104,'chennai'),(105,'pune');
+
+select * from student;
+select * from address;
+
+#join_______
+
+select * from
+student CROSS JOIN address;
+SELECT * from student INNER JOIN address where student.s_id = address.s_id;
+SELECT * FROM 
+student LEFT OUTER JOIN address
+ON student.s_id =address.s_id;
+SELECT * FROM 
+student right OUTER JOIN address
+ON student.s_id =address.s_id;
+
+SELECT * FROM 
+student f JOIN address
+ON student.s_id =address.s_id;
+
+SELECT * FROM stude nt FULL OUTER JOIN address ON (student.s_.id = address.s_id);
+
+SELECT MAX(SALARY) AS 5TH_HIGH
+FROM WORKER1 AS t1
+WHERE (
+    SELECT COUNT(DISTINCT SALARY)
+    FROM WORKER1 AS t2
+    WHERE t2.SALARY > t1.SALARY
+) = 4;
+
+
+
+
+
+
+
+
+
+
+
+

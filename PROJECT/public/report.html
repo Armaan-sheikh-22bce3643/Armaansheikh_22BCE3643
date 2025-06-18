@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report Lost or Found Item</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    label { display: block; margin: 10px 0 5px; }
+    input, textarea, select, button { width: 100%; padding: 8px; margin-bottom: 10px; }
+    button { cursor: pointer; }
+    #logoutBtn { float: right; margin-bottom: 20px; }
+    #message { color: green; }
+    .report { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .report button { width: auto; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <button id="logoutBtn">Logout</button>
+  <h1>Report Lost or Found Item</h1>
+
+  <form id="reportForm">
+    <label for="type">Type:</label>
+    <select name="type" id="type" required>
+      <option value="">Select</option>
+      <option value="lost">Lost</option>
+      <option value="found">Found</option>
+    </select>
+
+    <label for="itemName">Item Name:</label>
+    <input type="text" name="itemName" id="itemName" required />
+
+    <label for="description">Description:</label>
+    <textarea name="description" id="description"></textarea>
+
+    <label for="location">Location:</label>
+    <input type="text" name="location" id="location" />
+
+    <label for="contactInfo">Contact Info:</label>
+    <input type="text" name="contactInfo" id="contactInfo" />
+
+    <button type="submit">Report Item</button>
+  </form>
+
+  <div id="message"></div>
+
+  <h2>My Reports</h2>
+  <div id="myReports"></div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    const reportForm = document.getElementById('reportForm');
+    const message = document.getElementById('message');
+    const myReports = document.getElementById('myReports');
+    const submitBtn = reportForm.querySelector('button[type="submit"]');
+
+    let editId = null;
+
+    async function loadUserReports() {
+      myReports.innerHTML = '<p>Loading reports...</p>';
+      try {
+        const res = await fetch('/api/reports/mine', {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        if (!res.ok) throw new Error('Failed to load reports');
+        const reports = await res.json();
+
+        myReports.innerHTML = '';
+        if (reports.length === 0) {
+          myReports.innerHTML = '<p>No reports found.</p>';
+          return;
+        }
+
+        reports.forEach((r) => {
+          const div = document.createElement('div');
+          div.className = 'report';
+          div.innerHTML = `
+            <strong>${r.type.toUpperCase()}</strong> - ${r.itemName}<br/>
+            Description: ${r.description || '-'}<br/>
+            Location: ${r.location || '-'}<br/>
+            Contact: ${r.contactInfo || '-'}<br/>
+            Status: ${r.status || 'open'}<br/>
+            <button onclick="editReport('${r._id}')">Edit</button>
+            <button onclick="deleteReport('${r._id}')">Delete</button>
+          `;
+          myReports.appendChild(div);
+        });
+      } catch (err) {
+        myReports.innerHTML = '<p style="color:red;">Could not load reports.</p>';
+        console.error(err);
+      }
+    }
+
+    reportForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      message.style.color = 'green';
+      message.textContent = '';
+
+      const data = {
+        type: reportForm.type.value.trim(),
+        itemName: reportForm.itemName.value.trim(),
+        description: reportForm.description.value.trim(),
+        location: reportForm.location.value.trim(),
+        contactInfo: reportForm.contactInfo.value.trim(),
+      };
+
+      let url = '/api/reports';
+      let method = 'POST';
+      if (editId) {
+        url += '/' + editId;
+        method = 'PUT';
+      }
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json();
+        if (res.ok) {
+          message.style.color = 'green';
+          message.textContent = editId ? 'Report updated successfully!' : 'Report submitted successfully!';
+          reportForm.reset();
+          editId = null;
+          submitBtn.textContent = 'Report Item';
+          loadUserReports();
+        } else {
+          message.style.color = 'red';
+          message.textContent = result.message || 'Failed to submit report.';
+        }
+      } catch {
+        message.style.color = 'red';
+        message.textContent = 'Server error.';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    window.editReport = async function(id) {
+      try {
+        const res = await fetch('/api/reports/mine', {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        if (!res.ok) throw new Error('Failed to load reports');
+        const reports = await res.json();
+        const report = reports.find(r => r._id === id);
+        if (!report) {
+          alert('Report not found');
+          return;
+        }
+        editId = id;
+        reportForm.type.value = report.type;
+        reportForm.itemName.value = report.itemName;
+        reportForm.description.value = report.description || '';
+        reportForm.location.value = report.location || '';
+        reportForm.contactInfo.value = report.contactInfo || '';
+        submitBtn.textContent = 'Update Report';
+        message.textContent = '';
+        message.style.color = 'green';
+      } catch {
+        alert('Error loading report for edit');
+      }
+    };
+
+    window.deleteReport = async function(id) {
+      if (!confirm('Are you sure you want to delete this report?')) return;
+      try {
+        const res = await fetch('/api/reports/' + id, {
+          method: 'DELETE',
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        if (res.ok) {
+          loadUserReports();
+        } else {
+          alert('Failed to delete report');
+        }
+      } catch {
+        alert('Server error deleting report');
+      }
+    };
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+
+    loadUserReports();
+  </script>
+</body>
+</html>

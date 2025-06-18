@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lost & Found Management</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    h1 {
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+    .menu, .menu-loggedin {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 30px 40px;
+      width: 320px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+    }
+    button {
+      width: 100%;
+      background: #fff;
+      color: #764ba2;
+      border: none;
+      padding: 14px 0;
+      margin: 10px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background: #764ba2;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(118,75,162,0.6);
+    }
+    #exitBtn {
+      background: #e74c3c;
+      color: white;
+      font-weight: 700;
+    }
+    #exitBtn:hover {
+      background: #c0392b;
+    }
+    #welcomeMsg {
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lost & Found Management</h1>
+
+  <!-- Initial menu (Register/Login) -->
+  <div id="menuInitial" class="menu">
+    <button id="registerBtn">1. Register</button>
+    <button id="loginBtn">2. Login</button>
+  </div>
+
+  <!-- Logged in menu (after login/register) -->
+  <div id="menuLoggedIn" class="menu-loggedin" style="display:none;">
+    <div id="welcomeMsg"></div>
+    <button id="reportBtn">3. Report Lost/Found</button>
+    <button id="viewReportsBtn">4. View My Reports</button>
+    <button id="updateStatusBtn">5. Update Status</button>
+    <button id="deleteReportBtn">6. Delete Report</button>
+    <button id="exitBtn">7. Exit</button>
+  </div>
+
+  <script>
+    const menuInitial = document.getElementById('menuInitial');
+    const menuLoggedIn = document.getElementById('menuLoggedIn');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+
+    // Simulated logged in user (replace with real login logic)
+    let loggedInUser = null;
+
+    // Handlers for initial menu
+    document.getElementById('registerBtn').onclick = () => {
+      const username = prompt('Enter new username:');
+      if (!username) return alert('Username required.');
+      const password = prompt('Enter new password:');
+      if (!password) return alert('Password required.');
+      // TODO: call backend to register user (simulate here)
+      alert(`Registered user: ${username}`);
+      loggedInUser = username;
+      showLoggedInMenu();
+    };
+
+    document.getElementById('loginBtn').onclick = () => {
+      const username = prompt('Enter username:');
+      if (!username) return alert('Username required.');
+      const password = prompt('Enter password:');
+      if (!password) return alert('Password required.');
+      // TODO: call backend to login user (simulate here)
+      alert(`Logged in as: ${username}`);
+      loggedInUser = username;
+      showLoggedInMenu();
+    };
+
+    // Show logged in menu and hide initial
+    function showLoggedInMenu() {
+      menuInitial.style.display = 'none';
+      welcomeMsg.innerText = `Welcome, ${loggedInUser}!`;
+      menuLoggedIn.style.display = 'flex';
+    }
+
+    // Logged in menu handlers
+    document.getElementById('reportBtn').onclick = () => alert('Redirect to Report Lost/Found page');
+    document.getElementById('viewReportsBtn').onclick = () => alert('Redirect to View My Reports page');
+    document.getElementById('updateStatusBtn').onclick = () => alert('Redirect to Update Status page');
+    document.getElementById('deleteReportBtn').onclick = () => alert('Redirect to Delete Report page');
+    document.getElementById('exitBtn').onclick = () => {
+      if (confirm('Are you sure you want to exit?')) {
+        loggedInUser = null;
+        menuLoggedIn.style.display = 'none';
+        menuInitial.style.display = 'flex';
+      }
+    };
+  </script>
+</body>
+</html>
